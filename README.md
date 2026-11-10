@@ -9,10 +9,31 @@
 - **Уведомления**: всплывающие сообщения о завершении рабочей сессии или перерыва.
 - **Настройка времени**: возможность менять длительность работы и отдыха через настройки VS Code.
 
-## Требования для запуска
-- Установленный [VS Code](https://code.visualstudio.com/)
-- [Node.js](https://nodejs.org/) (версия 18+)
-- [Java JDK](https://www.oracle.com/java/technologies/downloads/) (версия 17+)
+## Требования и установка зависимостей
+
+Для работы плагина требуются **Java (JDK 17+)** и **Node.js (18+)**. 
+Ниже приведены инструкции для разных операционных систем.
+
+### Для Windows (без WSL)
+1. **Установка Java**:
+   - Скачайте установщик **JDK** (например, [Eclipse Temurin](https://adoptium.net/)) и установите его.
+   - Во время установки обязательно отметьте галочку **"Set JAVA_HOME variable"** и **"Add to PATH"**.
+   - Проверьте в командной строке (`cmd`): `java -version`.
+2. **Установка Node.js**:
+   - Скачайте и установите [Node.js](https://nodejs.org/) (LTS версию).
+   - Проверьте в командной строке: `node -v` и `npm -v`.
+
+### Для macOS
+1. **Установка Java**:
+   - Если у вас есть [Homebrew](https://brew.sh/), выполните: `brew install openjdk@17`.
+   - Или скачайте установщик с [Adoptium](https://adoptium.net/).
+2. **Установка Node.js**:
+   - Через Homebrew: `brew install node`.
+
+### Для Ubuntu / WSL (Linux)
+```bash
+sudo apt update
+sudo apt install default-jdk nodejs npm -y
 
 ## Установка и запуск (для разработки)
 1. Склонируйте репозиторий и перейдите в папку проекта:
