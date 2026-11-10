@@ -1,5 +1,5 @@
-import java.io BufferedReader;
-import java.io InputStreamReader;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -13,14 +13,14 @@ public class PomodoroServer {
     private static ScheduledExecutorService executor;
     private static Scheduled ScheduledFuture<?> task;
 
-    public static void main(string[]args) throws Exception {
+    public static void main(String[] args) throws Exception {
         executor = Executors.newSingleThreadScheduledExecutor();
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line;
         while  ((line = reader.readLine()) != null) {
             switch (line.trim()) {
                 case "start":
-                    startTimer():
+                    startTimer();
                     break;
                 case "pause":
                     pauseTimer();
