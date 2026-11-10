@@ -34,6 +34,7 @@
 ```bash
 sudo apt update
 sudo apt install default-jdk nodejs npm -y
+```
 
 ## Установка и запуск (для разработки)
 1. Склонируйте репозиторий и перейдите в папку проекта:
