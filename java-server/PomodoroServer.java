@@ -5,7 +5,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class PomodoroServer {
-    private static final int WORK_SECONDS = 25*60
+    private static final int WORK_SECONDS = 25 * 60;
     private static final int BREAK_SECONDS = 5 * 60;
 
     private static int remaining = WORK_SECONDS;
