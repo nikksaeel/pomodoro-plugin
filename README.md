@@ -40,3 +40,25 @@ sudo apt install default-jdk nodejs npm -y
 1. Склонируйте репозиторий и перейдите в папку проекта:
    ```bash
    cd pomodoro-plugin
+2. Откройте встроенный терминал (Ctrl + ~ или в меню Terminal -> New Terminal)
+3. Установите зависимости Node.js
+```bash
+npm install
+```
+4. Соберите Java-сервер (создатся файл pomodoro-server.jar)
+```bash
+cd java-server
+javac PomodoroServer.java
+jar cfe pomodoro-server.jar PomodoroServer PomodoroServer.class
+cd ..
+```
+5. Скомпилируйте TypeScript-клиент
+```bash
+npx tsc -p ./
+```
+6. Запустите плагин: нажмите клавишу F5 (или перейдите во вкладку "Run and Debug" слева и нажмите зеленую кнопку Play). Откроется новое окно VS Code (Extension Development Host) с уже загруженным плагином.
+
+7. В новом окне нажмите Ctrl+Shift+P (Палитра команд), введите Pomodoro: Start / Pause и нажмите Enter.
+
+8. Смотрите в правый нижний угол экрана (статус-бар) — таймер начал отсчет! Также плагин доступен в левой панели (иконка таймера).
+
