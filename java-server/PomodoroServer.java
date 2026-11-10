@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class PomodoroServer {
@@ -11,7 +12,7 @@ public class PomodoroServer {
     private static int remaining = WORK_SECONDS;
     private static boolean isWork = true;
     private static ScheduledExecutorService executor;
-    private static Scheduled ScheduledFuture<?> task;
+    private static ScheduledFuture<?> task;
 
     public static void main(String[] args) throws Exception {
         executor = Executors.newSingleThreadScheduledExecutor();
@@ -36,7 +37,7 @@ public class PomodoroServer {
     }
     private static void startTimer() {
         if (task != null && !task.isDone()) return;
-        task = executor.scheduleAtFixenRate(() -> {
+        task = executor.scheduleAtFixedRate(() -> {
             if (remaining > 0) {
                 remaining--;
                 emitState();
@@ -79,7 +80,7 @@ public class PomodoroServer {
         emitState(null);
     }
 
-    private static void emitState(Staring event) {
+    private static void emitState(String event) {
         String phase = isWork ? "work" : "break";
         String eventJson = event == null ? "null" : "\"" + event + "\"";
         System.out.printf(
