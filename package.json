@@ -2,7 +2,7 @@
     "name": "pomodoro-plugin",
     "displayName": "Pomodoro Timer",
     "version": "0.0.1",
-    "engines": { "VSCode": "^1.85.0" },
+    "engines": { "vscode": "^1.85.0" },
     "activationEvents": ["onStartupFinished"],
     "main": "./out/extension.js",
     "contributes": {
@@ -18,7 +18,7 @@
         "views": {
             "pomodoro-panel": [
                 {
-                    "type": "webview".
+                    "type": "webview",
                     "id": "pomodoro.view",
                     "name": "Таймер"
                 }
