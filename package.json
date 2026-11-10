@@ -6,6 +6,24 @@
     "activationEvents": ["onStartupFinished"],
     "main": "./out/extension.js",
     "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "pomodoro-panel",
+                    "title": "Pomodoro",
+                    "icon": "media/timer.svg"
+                }
+            ]
+        },
+        "views": {
+            "pomodoro-panel": [
+                {
+                    "type": "webview".
+                    "id": "pomodoro.view",
+                    "name": "Таймер"
+                }
+            ]
+        },
         "commands": [
             { "command": "pomodoro.startPause", "title": "Pomodoro: Start / Pause" },
             { "command": "pomodoro.reset", "title": "Pomodoro: Reset" }
@@ -15,9 +33,9 @@
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./"
     },
-    "devDependencies": {
-        "@types/VSCode": "^1.85.0",
-        "@types/node": "^20.0.0",
-        "typescript": "^5.3.0"
-    }
+   "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.0"
+  }
 }
