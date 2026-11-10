@@ -1,0 +1,2 @@
+javac PomodoroServer.java
+jar cfe pomodoro-server.jar Pomodoro Server PomodoroServer.class
