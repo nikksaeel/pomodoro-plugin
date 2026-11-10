@@ -36,7 +36,7 @@ sudo apt update
 sudo apt install default-jdk nodejs npm -y
 ```
 
-## Установка и запуск (для разработки)
+## Запуск
 1. Склонируйте репозиторий и перейдите в папку проекта:
    ```bash
    cd pomodoro-plugin
