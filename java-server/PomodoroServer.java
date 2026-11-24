@@ -6,8 +6,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class PomodoroServer {
-    private static final int WORK_SECONDS = 25 * 60;
-    private static final int BREAK_SECONDS = 5 * 60;
+    private static int WORK_SECONDS = 25 * 60;
+    private static int BREAK_SECONDS = 5 * 60;
 
     private static int remaining = WORK_SECONDS;
     private static boolean isWork = true;
@@ -19,6 +19,19 @@ public class PomodoroServer {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line;
         while  ((line = reader.readLine()) != null) {
+            if (line.startsWith("setTimes")) {
+                String[] parts = line.split(" ");
+                if (parts.length == 3) {
+                    try {
+                        int workMin = Integer.parseInt(parts[1]);
+                        int breakMin = Integer.parseInt(parts[2]);
+                        WORK_SECONDS = workMin * 60;
+                        BREAK_SECONDS = breakMin * 60;
+                        resetTimer(); 
+                    } catch (NumberFormatException e) { }
+                }
+                continue;
+            }
             switch (line.trim()) {
                 case "start":
                     startTimer();
@@ -84,7 +97,7 @@ public class PomodoroServer {
         String phase = isWork ? "work" : "break";
         String eventJson = event == null ? "null" : "\"" + event + "\"";
         System.out.printf(
-            "{\"remaining\":%d,\"phase\":\":\"%s\",\"event\":%s}%n", remaining, phase, eventJson
+            "{\"remaining\":%d,\"phase\":\"%s\",\"event\":%s}%n", remaining, phase, eventJson
         );
         System.out.flush();
     }
