@@ -24,11 +24,8 @@
    - Проверьте в командной строке: `node -v` и `npm -v`.
 
 ### Для macOS
-1. **Установка Java**:
-   - Если у вас есть [Homebrew](https://brew.sh/), выполните: `brew install openjdk@17`.
-   - Или скачайте установщик с [Adoptium](https://adoptium.net/).
-2. **Установка Node.js**:
-   - Через Homebrew: `brew install node`.
+
+в разработке
 
 ### Для Ubuntu / WSL (Linux)
 ```bash
@@ -38,8 +35,9 @@ sudo apt install default-jdk nodejs npm -y
 
 ## Запуск
 1. Склонируйте репозиторий и перейдите в папку проекта:
-   ```bash
-   cd pomodoro-plugin
+```bash
+cd pomodoro-plugin
+```
 2. Откройте встроенный терминал (Ctrl + ~ или в меню Terminal -> New Terminal)
 3. Установите зависимости Node.js
 ```bash
