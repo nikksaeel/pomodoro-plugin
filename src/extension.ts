@@ -5,12 +5,20 @@ import * as path from 'path';
 let statusBar: vscode.StatusBarItem;
 let javaProcess: cp.ChildProcessWithoutNullStreams | undefined;
 let stdioBuffer = '';
+let currentWebviewView: vscode.WebviewView | undefined;
+let sessionHistory: { date: string; duration: number }[] = [];
+let extensionContext: vscode.ExtensionContext;
+
+let currentWorkDuration = 25; 
 
 export function activate(context: vscode.ExtensionContext) {
     statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     statusBar.command = 'pomodoro.startPause';
-    statusBar.text = '$(play) Работа 25:00';
+    statusBar.text = '$(play) Концентрация 25:00';
     statusBar.show();
+    
+    sessionHistory = context.globalState.get('pomodoroHistory', []);
+    extensionContext = context;
 
     context.subscriptions.push(
         vscode.commands.registerCommand('pomodoro.startPause', () => {
@@ -32,7 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider('pomodoro.view', new PomodoroViewProvider(context.extensionUri))
+        vscode.window.registerWebviewViewProvider('pomodoro.view', new PomodoroViewProvider(context.extensionUri))
     );
 }
 
@@ -74,8 +82,20 @@ function handleJavaMessage(line: string) {
     const phase = msg.phase === 'work' ? 'Работа' : 'Перерыв';
     statusBar.text = `$(watch) ${phase} ${min}:${sec}`;
 
+    if (currentWebviewView) {
+        currentWebviewView.webview.postMessage({ 
+            command: 'updateTimer', 
+            text: `${min}:${sec}` 
+        });
+    }
+
     if (msg.event === 'work_done') {
-        vscode.window.showInformationMessage('🍅 Помидор вырос! Перерыв 5 минут.');
+        sessionHistory.push({ 
+            date: new Date().toISOString(), 
+            duration: currentWorkDuration 
+        });
+        extensionContext.globalState.update('pomodoroHistory', sessionHistory);
+        vscode.window.showInformationMessage('🍅 Помидор вырос! Перерыв.');
     } else if (msg.event === 'break_done') {
         vscode.window.showInformationMessage('☕ Перерыв закончен. Растим новый помидор.');
     }
@@ -91,17 +111,66 @@ class PomodoroViewProvider implements vscode.WebviewViewProvider {
     constructor(private readonly _extensionUri: vscode.Uri) {}
 
     public resolveWebviewView(webviewView: vscode.WebviewView) {
+        currentWebviewView = webviewView;
         webviewView.webview.options = { enableScripts: true };
         webviewView.webview.html = `
         <html>
-        <body style="text-align:center; font-family:sans-serif;">
+        <body style="text-align:center; font-family:sans-serif; padding: 10px;">
             <h2 id="timer">25:00</h2>
             <button onclick="send('start')">Старт</button>
             <button onclick="send('reset')">Сброс</button>
+            
+            <hr style="margin: 15px 0;">
+            
+            <div>
+                <label>Концентрация (мин): <input type="number" id="workInput" value="25" style="width: 50px;"></label><br><br>
+                <label>Отдых (мин): <input type="number" id="breakInput" value="5" style="width: 50px;"></label><br><br>
+                <button onclick="applySettings()">Применить</button>
+            </div>
+
+            <hr style="margin: 15px 0;">
+            <button onclick="requestHistory()">Показать историю</button>
+            <div id="historyList" style="text-align: left; margin-top: 10px; font-size: 12px; color: #ccc;"></div>
+
             <script>
                 const vscode = acquireVsCodeApi();
-                function send(cmd) { vscode.postMessage({ command: cmd }); }
-                // Здесь можно ловить сообщения от Java и менять цифры
+                
+                function send(cmd) { 
+                    vscode.postMessage({ command: cmd }); 
+                }
+                
+                function applySettings() {
+                    const work = document.getElementById('workInput').value;
+                    const breakTime = document.getElementById('breakInput').value;
+                    vscode.postMessage({ 
+                        command: 'setTimes', 
+                        work: parseInt(work), 
+                        breakTime: parseInt(breakTime) 
+                    });
+                }
+
+                 function requestHistory() {
+                    vscode.postMessage({ command: 'getHistory' });
+                }
+
+                window.addEventListener('message', event => {
+                    const message = event.data;
+                    if (message.command === 'updateTimer') {
+                        document.getElementById('timer').innerText = message.text;
+                    }
+
+                    if (message.command === 'showHistory') {
+                        const list = document.getElementById('historyList');
+                        if (message.data.length === 0) {
+                            list.innerHTML = "История пуста.";
+                        } else {
+                            list.innerHTML = message.data.map(item => {
+                                const date = new Date(item.date).toLocaleString();
+                                return \`<div>🍅 \${date} (\${item.duration} мин)</div>\`;
+                            }).join('');
+                        }
+                    }
+                });
             </script>
         </body>
         </html>`;
@@ -109,6 +178,16 @@ class PomodoroViewProvider implements vscode.WebviewViewProvider {
         webviewView.webview.onDidReceiveMessage(msg => {
             if (msg.command === 'start') sendToJava('start');
             if (msg.command === 'reset') sendToJava('reset');
+            if (msg.command === 'setTimes') {
+                currentWorkDuration = msg.work;
+                sendToJava(`setTimes ${msg.work} ${msg.breakTime}`);
+            }
+            if (msg.command === 'getHistory') {
+                webviewView.webview.postMessage({ 
+                    command: 'showHistory', 
+                    data: sessionHistory 
+                });
+            }
         });
     }
 }
